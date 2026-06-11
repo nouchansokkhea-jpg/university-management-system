@@ -1,5 +1,5 @@
 # Stage 1: Build PHP dependencies
-FROM php:8.3-fpm-alpine AS php-builder
+FROM php:8.4-fpm-alpine AS php-builder
 
 # Install system dependencies & PHP extensions
 ADD --chmod=0755 https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
@@ -13,7 +13,7 @@ WORKDIR /var/www/html
 # Copy only dependency definitions first to leverage Docker cache
 COPY composer.json composer.lock ./
 
-RUN composer install --no-dev --no-interaction --no-autoloader --no-scripts --prefer-dist
+RUN composer install --no-dev --no-interaction --no-autoloader --no-scripts --prefer-dist --ignore-platform-reqs
 
 # Copy the rest of the application files
 COPY . .
@@ -35,7 +35,7 @@ RUN npm ci && npm run build
 
 
 # Stage 3: Production environment
-FROM php:8.3-fpm-alpine
+FROM php:8.4-fpm-alpine
 
 # Install nginx and runtime dependencies
 RUN apk add --no-cache nginx
